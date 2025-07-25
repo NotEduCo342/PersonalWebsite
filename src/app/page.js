@@ -56,10 +56,10 @@ export default function Home() {
             {/* Text Content Column */}
             <div className="md:col-span-2 text-slate-300 text-lg text-center md:text-left">
               <p className="mb-4">
-                Hello! I'm Mahan, a passionate Mechatronics Engineering student with a deep interest in the intersection of electronics and software. My journey began with a fascination for how things work, leading me to the world of ESP32 and Arduino.
+                Hello! I&apos;m Mahan, a passionate Mechatronics Engineering student with a deep interest in the intersection of electronics and software. My journey began with a fascination for how things work, leading me to the world of ESP32 and Arduino.
               </p>
               <p>
-                On the software side, I'm honing my skills as a front-end developer, working with React and modern tools to build clean, user-friendly interfaces that bring ideas to life.
+                On the software side, I&apos;m honing my skills as a front-end developer, working with React and modern tools to build clean, user-friendly interfaces that bring ideas to life.
               </p>
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function Home() {
             </span>
           </h2>
           <p className="text-lg text-slate-400 text-center mb-12 max-w-3xl mx-auto">
-              Here are a few projects I'm currently working on. More details will be uploaded soon!
+              Here are a few projects I&apos;m currently working on. More details will be uploaded soon!
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* We map over the projects data and render a card for each one */}
@@ -92,9 +92,9 @@ export default function Home() {
       </section>
       <section id="contact" className="py-24">
         <div className="container mx-auto px-6 max-w-2xl text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Let's Connect</h2>
+          <h2 className="text-3xl font-bold text-white mb-4">Let&apos;s Connect</h2>
           <p className="text-slate-400 mb-8 text-lg">
-            I'm always open to discussing new projects, creative ideas, or opportunities. Feel free to reach out.
+            I&apos;m always open to discussing new projects, creative ideas, or opportunities. Feel free to reach out.
           </p>
           <a 
             href="mailto:farajimohamadmahan@gmail.com" // <-- TODO: Update your email
