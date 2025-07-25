@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://noteduco342.ir/sitemap.xml
