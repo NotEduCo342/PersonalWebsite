@@ -3,6 +3,7 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { PageTransition } from '@/components/PageTransition';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -60,7 +61,7 @@ export default function RootLayout({ children }) {
         >
           <Header />
           <main className="flex-grow">
-            {children}
+            <PageTransition>{children}</PageTransition>
           </main>
           <Footer />
         </ThemeProvider>
