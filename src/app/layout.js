@@ -57,7 +57,6 @@ export default function RootLayout({ children }) {
           attribute="class"
           defaultTheme="dark"
           enableSystem
-          disableTransitionOnChange
         >
           <Header />
           <main className="flex-grow">
