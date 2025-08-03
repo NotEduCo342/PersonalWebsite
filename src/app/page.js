@@ -34,7 +34,7 @@ export default function Home() {
       <section id="home" className="min-h-screen flex flex-col justify-center items-center text-center px-6">
         <div className="max-w-3xl">
           <motion.h1
-            className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white leading-tight mb-4"
+            className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-foreground leading-tight mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -45,12 +45,12 @@ export default function Home() {
               Mahan
             </span>
 
-            <span className="block text-3xl md:text-5xl text-slate-500 dark:text-slate-400 mt-2">
+            <span className="block text-3xl md:text-5xl text-muted-foreground mt-2">
               Mechatronics Engineer & Developer
             </span>
           </motion.h1>
           <motion.p
-            className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8"
+            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -74,7 +74,7 @@ export default function Home() {
       <ScrollAnimation>
         <section id="about" className="py-24">
           <div className="container mx-auto px-6 max-w-4xl">
-            <h2 className="text-3xl font-bold text-center mb-12">
+            <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
               <span className="border-b-2 border-indigo-500 pb-2">
                 About Me
               </span>
@@ -88,13 +88,13 @@ export default function Home() {
                     src="/profile.jpg" // The path to your image in the 'public' folder
                     alt="A portrait of Mahan"
                     fill // 'fill' makes the image fill its parent container
-                    className="rounded-full object-cover border-4 border-slate-200 dark:border-slate-800 shadow-lg"
+                    className="rounded-full object-cover border-4 border-secondary shadow-lg"
                   />
                 </div>
               </div>
 
               {/* Text Content Column */}
-              <div className="md:col-span-2 text-slate-600 dark:text-slate-300 text-lg text-center md:text-left">
+              <div className="md:col-span-2 text-muted-foreground text-lg text-center md:text-left">
                 <p className="mb-4">
                   Hello! I&apos;m Mahan, a passionate Mechatronics Engineering student with a deep interest in the intersection of electronics and software. My journey began with a fascination for how things work, leading me to the world of ESP32 and Arduino.
                 </p>
@@ -108,12 +108,12 @@ export default function Home() {
       </ScrollAnimation>
       <section id="projects" className="py-24">
         <div className="container mx-auto px-6 max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-4">
+          <h2 className="text-3xl font-bold text-center mb-4 text-foreground">
             <span className="border-b-2 border-indigo-500 pb-2">
               My Projects
             </span>
           </h2>
-          <p className="text-lg text-slate-500 dark:text-slate-400 text-center mb-12 max-w-3xl mx-auto">
+          <p className="text-lg text-muted-foreground text-center mb-12 max-w-3xl mx-auto">
               Here are a few projects I&apos;m currently working on. More details will be uploaded soon!
           </p>
           <motion.div
@@ -141,8 +141,8 @@ export default function Home() {
       <ScrollAnimation>
         <section id="contact" className="py-24">
           <div className="container mx-auto px-6 max-w-2xl text-center">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Let&apos;s Connect</h2>
-            <p className="text-slate-500 dark:text-slate-400 mb-8 text-lg">
+            <h2 className="text-3xl font-bold text-foreground mb-4">Let&apos;s Connect</h2>
+            <p className="text-muted-foreground mb-8 text-lg">
               I&apos;m always open to discussing new projects, creative ideas, or opportunities. Feel free to reach out.
             </p>
             <a
@@ -152,13 +152,13 @@ export default function Home() {
               Say Hello
             </a>
             <div className="flex justify-center space-x-6">
-              <a href="https://github.com/NotEduCo342" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" aria-label="GitHub Profile">
+              <a href="https://github.com/NotEduCo342" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub Profile">
                 <FaGithub size={32} />
               </a>
-              <a href="https://linkedin.com/in/NotEduCo342" className="text-slate-500 dark:text-slate-400 hover:text-sky-500 transition-colors" aria-label="LinkedIn Profile">
+              <a href="https://linkedin.com/in/NotEduCo342" className="text-muted-foreground hover:text-sky-500 transition-colors" aria-label="LinkedIn Profile">
                 <FaLinkedin size={32} />
               </a>
-              <a href="https://t.me/NotEduCo342" className="text-slate-500 dark:text-slate-400 hover:text-blue-400 transition-colors" aria-label="Telegram Profile">
+              <a href="https://t.me/NotEduCo342" className="text-muted-foreground hover:text-blue-400 transition-colors" aria-label="Telegram Profile">
                 <FaTelegramPlane size={32} />
               </a>
             </div>
