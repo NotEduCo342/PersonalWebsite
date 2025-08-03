@@ -1,17 +1,44 @@
+'use client';
+
 import Image from 'next/image';
 import ProjectCard from '@/components/ProjectCard';
 import { FaGithub, FaLinkedin, FaTelegramPlane } from 'react-icons/fa';
 import { ScrollAnimation } from '@/components/ScrollAnimation';
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
 // Projects
 import { projects } from '@/lib/projectData';
 
 export default function Home() {
+  const projectsRef = useRef(null);
+  const isInView = useInView(projectsRef, { once: true, margin: "-100px" });
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
     <main>
       {/* Hero Section */}
       <section id="home" className="min-h-screen flex flex-col justify-center items-center text-center px-6">
         <div className="max-w-3xl">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white leading-tight mb-4">
+          <motion.h1
+            className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white leading-tight mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
             
             {/* Here we create the "glow" effect using Tailwind's arbitrary values */}
             <span className="dark:[text-shadow:0_0_8px_rgba(255,255,255,0.3),_0_0_20px_rgba(96,165,250,0.4)]">
@@ -21,16 +48,27 @@ export default function Home() {
             <span className="block text-3xl md:text-5xl text-slate-500 dark:text-slate-400 mt-2">
               Mechatronics Engineer & Developer
             </span>
-          </h1>
-          <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8">
-            Crafting innovative solutions where hardware meets software. Specializing in microcontrollers and front-end development.
-          </p>
-          <a 
-            href="#projects" 
-            className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-lg px-8 py-4 rounded-xl inline-block transition-all duration-300 hover:shadow-[0_0_20px_rgba(99,102,241,0.6)]"
+          </motion.h1>
+          <motion.p
+            className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
-            View My Work
-          </a>
+            Crafting innovative solutions where hardware meets software. Specializing in microcontrollers and front-end development.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <a
+              href="#projects"
+              className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-lg px-8 py-4 rounded-xl inline-block transition-all duration-300 hover:shadow-[0_0_20px_rgba(99,102,241,0.6)]"
+            >
+              View My Work
+            </a>
+          </motion.div>
         </div>
       </section>
       <ScrollAnimation>
@@ -68,33 +106,38 @@ export default function Home() {
           </div>
         </section>
       </ScrollAnimation>
-      <ScrollAnimation>
-        <section id="projects" className="py-24">
-          <div className="container mx-auto px-6 max-w-6xl">
-            <h2 className="text-3xl font-bold text-center mb-4">
-              <span className="border-b-2 border-indigo-500 pb-2">
-                My Projects
-              </span>
-            </h2>
-            <p className="text-lg text-slate-500 dark:text-slate-400 text-center mb-12 max-w-3xl mx-auto">
-                Here are a few projects I&apos;m currently working on. More details will be uploaded soon!
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* We map over the projects data and render a card for each one */}
-              {projects.map((project) => (
+      <section id="projects" className="py-24">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <h2 className="text-3xl font-bold text-center mb-4">
+            <span className="border-b-2 border-indigo-500 pb-2">
+              My Projects
+            </span>
+          </h2>
+          <p className="text-lg text-slate-500 dark:text-slate-400 text-center mb-12 max-w-3xl mx-auto">
+              Here are a few projects I&apos;m currently working on. More details will be uploaded soon!
+          </p>
+          <motion.div
+            ref={projectsRef}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+          >
+            {/* We map over the projects data and render a card for each one */}
+            {projects.map((project) => (
+              <motion.div key={project.title} variants={itemVariants}>
                 <ProjectCard
-                  key={project.title}
                   title={project.title}
                   description={project.description}
                   imageUrl={project.imageUrl}
                   tags={project.tags}
                   slug={project.slug}
                 />
-              ))}
-            </div>
-          </div>
-        </section>
-      </ScrollAnimation>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
       <ScrollAnimation>
         <section id="contact" className="py-24">
           <div className="container mx-auto px-6 max-w-2xl text-center">

@@ -1,20 +1,12 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
 
-export function ScrollAnimation({ children, className }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
+// This component is now a more generic motion-enabled div.
+// The animation logic will be controlled by the parent component using variants.
+export function ScrollAnimation({ children, className, ...props }) {
   return (
-    <motion.div
-      ref={ref}
-      className={className}
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-    >
+    <motion.div className={className} {...props}>
       {children}
     </motion.div>
   );
