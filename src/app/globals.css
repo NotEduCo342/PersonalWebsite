@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+section h1 {
+  @apply text-4xl;
+}

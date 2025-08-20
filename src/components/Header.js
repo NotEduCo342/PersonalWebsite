@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import Link from 'next/link';
 
 export default function Header() {
@@ -17,6 +18,8 @@ export default function Header() {
     };
   }, []);
 
+  const { data: session, status } = useSession();
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-black/50 backdrop-blur-sm shadow-lg' : ''}`}>
       <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -29,6 +32,16 @@ export default function Header() {
           <Link href="#about" className="text-slate-300 hover:text-white transition-colors">About</Link>
           <Link href="#projects" className="text-slate-300 hover:text-white transition-colors">Projects</Link>
           <Link href="#contact" className="text-slate-300 hover:text-white transition-colors">Contact</Link>
+          {status === 'loading' && <span className="text-slate-400 text-sm">Loading...</span>}
+          {status !== 'loading' && !session && (
+            <button onClick={() => signIn()} className="text-slate-300 hover:text-white transition-colors text-sm">Sign In</button>
+          )}
+          {session && (
+            <>
+              <span className="text-slate-400 text-sm">{session.user?.name || session.user?.email}</span>
+              <button onClick={() => signOut()} className="text-slate-300 hover:text-white transition-colors text-sm">Sign Out</button>
+            </>
+          )}
         </div>
 
         <Link href="#contact" className="hidden md:block bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2 rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(99,102,241,0.6)]">
@@ -51,6 +64,12 @@ export default function Header() {
           <Link href="#about" onClick={() => setIsMenuOpen(false)} className="block py-2 px-4 text-sm text-slate-300 hover:bg-gray-700">About</Link>
           <Link href="#projects" onClick={() => setIsMenuOpen(false)} className="block py-2 px-4 text-sm text-slate-300 hover:bg-gray-700">Projects</Link>
           <Link href="#contact" onClick={() => setIsMenuOpen(false)} className="block py-2 px-4 text-sm text-slate-300 hover:bg-gray-700">Contact</Link>
+          {status !== 'loading' && !session && (
+            <button onClick={() => { signIn(); setIsMenuOpen(false); }} className="block w-full text-left py-2 px-4 text-sm text-slate-300 hover:bg-gray-700">Sign In</button>
+          )}
+          {session && (
+            <button onClick={() => { signOut(); setIsMenuOpen(false); }} className="block w-full text-left py-2 px-4 text-sm text-slate-300 hover:bg-gray-700">Sign Out</button>
+          )}
         </div>
       </div>
     </header>

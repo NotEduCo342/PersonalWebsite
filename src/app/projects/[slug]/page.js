@@ -1,8 +1,10 @@
+
 import { projects } from '@/lib/projectData';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaGithub } from 'react-icons/fa';
+import tagColorMap from '@/lib/tagColorMap';
 
 
 export async function generateMetadata({ params }) {
@@ -57,11 +59,14 @@ export default async function ProjectDetailPage({ params }) {
         <div className="md:w-1/3 md:sticky top-28 self-start">
           <h1 className="text-4xl font-bold text-white mb-2">{project.title}</h1>
           <div className="flex flex-wrap gap-2 my-4">
-            {project.tags.map((tag) => (
-              <span key={tag} className="bg-slate-700 text-cyan-300 text-xs font-semibold px-2.5 py-1 rounded-full">
-                {tag}
-              </span>
-            ))}
+            {project.tags.map((tag) => {
+              const colorClass = tagColorMap[tag] || 'bg-gray-500/20 text-gray-300';
+              return (
+                <span key={tag} className={`text-xs font-semibold px-2.5 py-1 rounded-full ${colorClass}`}>
+                  {tag}
+                </span>
+              );
+            })}
           </div>
           <p className="text-slate-400 mb-6">{project.description}</p>
           <Link href={project.githubUrl} className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(99,102,241,0.6)]">
@@ -86,7 +91,7 @@ export default async function ProjectDetailPage({ params }) {
             {/* You can add more markdown or JSX content here */}
           </div>
         </div>
-
+            
       </div>
     </div>
   );

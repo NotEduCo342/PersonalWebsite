@@ -2,6 +2,9 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Provider from '@/lib/trpc/Provider';
+import AuthSessionProvider from '@/components/AuthSessionProvider';
+import PerformanceMonitor from '@/components/PerformanceMonitor';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,7 +33,7 @@ export const metadata = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'Mahan Faraji',
+  name: 'Mahan .F',
   url: 'https://NotEduCo342.iR', // TODO: Replace with your actual domain when you deploy
   jobTitle: 'Mechatronics Engineer and Developer Also known as NotEduCo342',
   // You can add more details like links to your social profiles
@@ -51,11 +54,14 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={`${inter.className} bg-[#0a0a0a] text-slate-200 antialiased flex flex-col min-h-screen`}>
-        <Header />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
+        <PerformanceMonitor />
+        <Provider>
+          <AuthSessionProvider>
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </AuthSessionProvider>
+        </Provider>
       </body>
     </html>
   );

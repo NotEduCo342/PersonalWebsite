@@ -1,0 +1,173 @@
+Project: Personal Website (Next.js + Prisma + tRPC + next-auth v4)
+
+Purpose of this document:
+Summarize all codebase changes introduced to (1) load Project data from a PostgreSQL database via Prisma + tRPC and (2) implement user authentication & authorization (GitHub, Google, Credentials) with role-based access (USER / ADMIN).
+
+==================================================
+1. DATABASE PROJECT LOADING
+==================================================
+A. Prisma Schema (prisma/schema.prisma)
+   - Added/confirmed Project model:
+       model Project {
+         id          String   @id @default(cuid())
+         title       String
+         slug        String   @unique
+         description String
+         imageUrl    String
+         tags        String[]
+         createdAt   DateTime @default(now())
+         updatedAt   DateTime @updatedAt
+       }
+   - (Later) Added Auth models (see section 2) plus Role enum.
+
+B. Prisma Client Helper (src/lib/db.ts)
+   - Centralized singleton Prisma client with query logging in dev.
+
+C. Seed Script (prisma/seed.js)
+   - Upserts project data from local static array (src/lib/projectData.js) into the database.
+   - Added optional admin credentials seeding using ADMIN_EMAIL / ADMIN_PASSWORD env vars; promotes first user to ADMIN if no admin exists.
+
+D. tRPC Setup
+   - src/server/api/trpc.ts: initialized tRPC instance.
+   - Added context to include authenticated session later.
+   - Added procedure middlewares: protectedProcedure, adminProcedure (authorization layer for future mutations).
+
+E. Project Router (src/server/api/routers/project.ts)
+   - Added getAll query to fetch projects ordered by createdAt desc.
+
+F. API Handler (src/app/api/trpc/[trpc]/route.ts)
+   - Uses fetchRequestHandler and injects session into context.
+
+G. Frontend Consumption
+   - src/lib/trpc/client.ts + Provider.tsx: React Query + tRPC client.
+   - Home page (src/app/page.js): calls api.project.getAll.useQuery() to display projects; replaced plain loading text with skeleton loader component.
+   - Skeleton Loader (src/components/ProjectSkeleton.js) added for improved UX during project loading.
+
+==================================================
+2. AUTHENTICATION & AUTHORIZATION (next-auth v4 stable)
+==================================================
+A. Prisma Schema Additions
+   - enum Role { USER ADMIN }
+   - User / Account / Session / VerificationToken models added to support next-auth database session strategy.
+   - User includes: role (enum), passwordHash (for credentials provider), timestamps.
+
+B. Auth Configuration (src/auth.ts)
+   - Defines authOptions: PrismaAdapter(prisma), database session strategy.
+   - Providers: GitHub, Google (OAuth), Credentials (email + password with bcrypt hash check).
+   - Callbacks:
+       signIn: promote first user to ADMIN (if no admin exists yet).
+       session: attach user.id and user.role to session.user for client consumption.
+   - Exports GET/POST handlers (route handler re-export pattern) and helper getServerAuthSession.
+
+C. Auth Route Handler (src/app/api/auth/[...nextauth]/route.ts)
+   - Re-exports GET/POST from src/auth.ts.
+
+D. tRPC Integration
+   - Context includes session (getServerAuthSession in route handler).
+   - Middleware isAuthed (protectedProcedure) and isAdmin (adminProcedure) ready for future secured mutations (e.g., project create/update/delete).
+
+E. UI Integration
+   - Header (src/components/Header.js) enhanced with Sign In / Sign Out buttons and session state display via useSession hook.
+   - Added AuthSessionProvider (src/components/AuthSessionProvider.tsx) as client wrapper around SessionProvider.
+
+F. Passwords / Credentials Provider
+   - bcryptjs used for hashing seeded credentials user (seed script) and verifying at login.
+   - Dummy hash technique to mitigate timing oracle when user not found.
+
+G. Role Promotion Logic
+   - First successfully persisted user (any provider) becomes ADMIN (promoteFirstUserToAdmin in earlier iteration, now rolled into callback logic within authOptions).
+
+H. Type Augmentation
+   - next-auth.d.ts declares role on Session.user (ensures TypeScript access to session.user.role).
+
+==================================================
+3. ENVIRONMENT VARIABLES
+==================================================
+Core:
+  DATABASE_URL=postgres://... (already present in prisma/.env)
+  AUTH_SECRET= (generate a secure random value)
+OAuth Providers:
+  GITHUB_ID=
+  GITHUB_SECRET=
+  GOOGLE_CLIENT_ID=
+  GOOGLE_CLIENT_SECRET=
+Credentials Seeding (optional):
+  ADMIN_EMAIL=
+  ADMIN_PASSWORD=
+
+==================================================
+4. MIGRATIONS & DRIFT HANDLING
+==================================================
+Because schema evolved AFTER initial db push without corresponding migration history, a drift warning occurred.
+Resolution path:
+  pnpm prisma migrate reset --force --skip-seed
+  pnpm prisma migrate dev --name add_auth
+  pnpm prisma generate
+  pnpm seed (with optional ADMIN_* env vars set)
+
+==================================================
+5. NEW / MODIFIED FILES SUMMARY
+==================================================
+Added:
+  src/auth.ts (authOptions & handlers)
+  src/app/api/auth/[...nextauth]/route.ts
+  src/components/AuthSessionProvider.tsx
+  src/components/ProjectSkeleton.js
+  next-auth.d.ts (module augmentation)
+  CHANGES_AUTH_AND_DB.txt (this document)
+Modified:
+  prisma/schema.prisma (added auth models & Role enum)
+  prisma/seed.js (admin seeding + credentials)
+  src/server/api/trpc.ts (context + protected/admin procedures)
+  src/app/api/trpc/[trpc]/route.ts (session injection)
+  src/components/Header.js (session-aware nav)
+  src/app/layout.js (added session provider wrapper)
+  src/app/page.js (skeleton loader usage)
+  package.json (added next-auth & @next-auth/prisma-adapter; removed experimental @auth packages)
+  README.md (auth setup section)
+
+==================================================
+6. RUNTIME FLOW (HIGH LEVEL)
+==================================================
+1. User visits / -> page.js triggers tRPC query -> server fetches projects via Prisma.
+2. If user clicks Sign In -> redirected through next-auth provider flow.
+3. After callback -> next-auth persists user/account/session in DB.
+4. Session available client-side (useSession) and server-side (getServerAuthSession) enabling future protected tRPC mutations.
+5. First user gets ADMIN role; later we can gate create/update/delete operations with adminProcedure.
+
+==================================================
+7. SECURITY & SCALABILITY NOTES
+==================================================
+- Database sessions allow server-side invalidation if needed.
+- Role enum restricts allowed values; future roles can be appended with a migration.
+- Credentials provider uses bcrypt (can raise cost factor later).
+- Dummy hash prevents user enumeration timing discrepancies.
+- Protected & admin middlewares centralize authorization for future routers.
+- Separation of authOptions simplifies eventual upgrade path or provider additions.
+
+==================================================
+8. FUTURE IMPROVEMENTS (OPTIONAL)
+==================================================
+- Add project CRUD mutations (create/update/delete) guarded by adminProcedure.
+- Implement /admin dashboard (RSC) for content management.
+- Add email provider (magic link) by inserting VerificationToken usage.
+- Introduce rate limiting / IP throttling on credentials login.
+- Add audit log table for admin actions.
+- Implement edge caching for public project list (stale-while-revalidate) once auth-protected routes diverge.
+
+==================================================
+9. QUICK COMMAND REFERENCE
+==================================================
+# Migrations & seed
+pnpm prisma migrate dev --name add_auth
+pnpm prisma generate
+pnpm seed
+
+# Reset (destructive dev only)
+pnpm prisma migrate reset --force --skip-seed
+
+# Dev server
+pnpm dev
+
+==================================================
+End of document.
